@@ -1,0 +1,6 @@
+version: '3.9'
+
+services:
+  job-search-app:
+    container_name: job-search-prod
+    command: yarn start

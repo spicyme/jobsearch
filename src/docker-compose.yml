@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  job-search-app:
+    build: .
+    image: job-search-app
+    ports:
+      - 4005:3000
+    environment:
+      - MONGODB_URL=mongodb://job-search-mongodb:27017/job-search
+    depends_on:
+      - job-search-mongodb
+    volumes:
+      - .:/usr/src/job-search
+    networks:
+      - job-search-network
+  job-search-mongodb:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - 27020:27017
+    volumes:
+      - dbdata:/data/db-data
+    networks:
+      - job-search-network
+  boilet-mongo:
+    image: mrvautin/adminmongo
+    restart: always
+    environment:
+        - CONN_NAME=mongo_conn
+        - DB_PORT=27017
+        - HOST=0.0.0.0
+    ports:
+        - 1220:1234
+    links: ['job-search-mongodb:mongo']
+    networks:
+      - job-search-network
+
+volumes:
+  dbdata:
+
+networks:
+  job-search-network:
+    driver: bridge
